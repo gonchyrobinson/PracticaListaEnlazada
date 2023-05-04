@@ -1,210 +1,275 @@
 /*
-*    AUTHOR: Catedra de lenguajes de Taller 1 
-*    DATE: 04/2021
-*    LICENCE: Creative Commons 
-*/
+ *    AUTHOR: Catedra de lenguajes de Taller 1
+ *    DATE: 04/2021
+ *    LICENCE: Creative Commons
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include<stdbool.h>
+#include <stdbool.h>
 
-typedef struct Producto TProducto;
 struct Producto
 {
-    int Id; /*Valor incremental*/
-    char *Nombre; /*Sacar de la lista de Nombres*/
-    char *Sucursal; /*Sacar de la lista de Sucursales*/    
-    float Peso; /*Valor entre 0.5 y 50*/
-}Producto;
+    int Id;         /*Valor incremental*/
+    char *Nombre;   /*Sacar de la lista de Nombres*/
+    char *Sucursal; /*Sacar de la lista de Sucursales*/
+    float Peso;     /*Valor entre 0.5 y 50*/
+};
+typedef struct Producto TProducto;
 
 typedef struct nodo Tnodo;
 struct nodo
 {
-   TProducto * Producto;
-   Tnodo * Siguiente;
+    TProducto *dato;
+    Tnodo *siguiente;
 } nodo;
 
-char Nombre[10][35] = 
-{
-    "Ventilador Portatil", 
-    "Lavarropas Semi Automatico", 
-    "Licuadora", 
-    "Heladera Chui", 
-    "Exprimidor", 
-    "Tv 65 pulgadas SanSan", 
-    "Cocina", 
-    "Estacion De Poder 5", 
-    "XCaja Serie X ",
-    "OjoPhone 11"
-};
-
-char Sucursales[3][15] = 
-{
-    "Tucuman", "Salta", "Santiago"
-};
-
-/* Crea una nueva lista vacia */
-Tnodo * CrearListaVacia();
-//Funcion que pregunta si la lista es vacia
-bool Esvacia(Tnodo* lista);
-/*Crea un nuevo puntero de Producto en memoria (estructura Producto) lo carga con valores aleatorios y lo devuelve */
-TProducto * CrearProducto(int id);
-
-/*Crea un nuevo nodo en memoria (estructura TNodo) y lo devuelve */
-Tnodo * CrearNodo(TProducto * Producto);
-
-/*Inserta un Nodo al comienzo de la lista*/
-void InsertarEnLista(Tnodo ** Lista, Tnodo * Nodo);
-
-/*Quita el primer nodo de la lista y lo devuelve*/
-Tnodo * QuitarNodo(Tnodo ** Lista);
-
-/*Cuenta la cantidad nodos de la lista */
-int  CantidadDeNodos(Tnodo * Lista);
-
-/*Devuelve el total de la suma de los Peso de los productos de la lista */
-int  PesoDeLista(Tnodo * Lista);
-
-/*Muestra Los elementos de la lista*/
-void Mostrar(Tnodo * Lista);
-
-/* Eliminar Lista de memoria */
-void EliminarLista(Tnodo ** Lista);
-
-//Cargar productos de una lista 
-TProducto* CargarProducto(int i);
-
-//Cargar productos en los camiones
-void MoverProductos(Tnodo** ListadoDeProductos, Tnodo**RepartoLiviano, Tnodo** RepartoPesado, Tnodo** Deposito);
-int main()
-{              
-    srand(time(NULL));
-    int SucursalSeleccionada;
-    float TotalDeCompra = 0;
-    Tnodo * ListadoDeProductos = CrearListaVacia();
-    Tnodo * Deposito = CrearListaVacia();
-    Tnodo * RepartoLiviano = CrearListaVacia();
-    Tnodo * RepartoPesado = CrearListaVacia();
-    Tnodo* nodo;
-    TProducto* Producto;
-
-    int cantProductos = rand() % 91 + 10;         
-    printf("Creando Productos y Nodos");    
-     
-     /* Cargando la lista de Productos */
-    for (int i = 0; i < cantProductos; i++)
+char Nombre[10][35] =
     {
-        /* Aquí debes crear los Productos, los nodos y cargalos en la lista Productos */   
-        Producto=CargarProducto(i);
-        nodo=CrearNodo(Producto);
-        InsertarEnLista(&ListadoDeProductos, nodo); 
+        "Ventilador Portatil",
+        "Lavarropas Semi Automatico",
+        "Licuadora",
+        "Heladera Chui",
+        "Exprimidor",
+        "Tv 65 pulgadas SanSan",
+        "Cocina",
+        "Estacion De Poder 5",
+        "XCaja Serie X ",
+        "OjoPhone 11"};
 
-    }
-    printf("=============LISTA PRODUCTOS ==========\n");
-    Mostrar(ListadoDeProductos);
-    MoverProductos(&ListadoDeProductos,&RepartoLiviano,&RepartoPesado,&Deposito);
-    printf("=========REPARTO PESADO===========\n");
-    Mostrar(RepartoPesado);
-    printf("========REPARTO LIVIANO========\n");
-    Mostrar(RepartoLiviano);
-    printf("================DEPOSITO============\n");
-    Mostrar(Deposito);
-    /* Quitar los juegos los nodos de memoria cargar a la lista Juegos y de carrito */
-    printf("Mostrar la sucursal (1 - Tucumán, 2 - Salta , 3 - Deposito)"); 
-    scanf(" %d",&SucursalSeleccionada);
-    
-    /* Eliminar de memoria free() lo que se creó */
-    
-    /*fin del programa*/
-    printf("Fin parcial"); 
-    getchar();
-    return 0;
-}
+char Sucursales[3][15] =
+    {
+        "Tucuman", "Salta", "Santiago"};
 
-Tnodo * CrearListaVacia()
+Tnodo *CrearListaVacia();
+bool EsListaVacia(Tnodo *cabecera);
+Tnodo *CrearNodo(TProducto *dato);
+void InsertarNodo(Tnodo **cabecera, Tnodo *nodo);
+void MostrarLista(Tnodo *lista);
+void EliminaPrimerElemento(Tnodo **cabecera);
+Tnodo *DesenlazarPrimerNodo(Tnodo **cabecera);
+TProducto *CreaProducto(int id);
+void MuestraProd(TProducto *prod);
+void MueveProductos(Tnodo **lista, Tnodo **repartoPesado, Tnodo **repartoLiviano, Tnodo **deposito);
+float PesoTotal(Tnodo *lista);
+int cantProd(Tnodo *lista);
+void MostrarNProductos(Tnodo *lista, int cant);
+void LiberaMemoria(Tnodo **lista);
+
+int main()
 {
-    return NULL;
-}
-
-TProducto* CargarProducto(int i){
-    TProducto* aux;
-    aux=(TProducto*)malloc(sizeof(TProducto));
-    aux->Id=i;
-    aux->Nombre=(char*)malloc(35*sizeof(char));
-    aux->Nombre=Nombre[rand()%10];
-    aux->Peso=rand()%50+0.5;
-    aux->Sucursal=(char*)malloc(15*sizeof(char));
-    aux->Sucursal=Sucursales[rand()%3];
-    return(aux);
-}
-
-Tnodo * CrearNodo(TProducto * Producto){
-    Tnodo* aux;
-    aux=(Tnodo*)malloc(sizeof(Tnodo));
-    aux->Producto=Producto;
-    aux->Siguiente=NULL;
-    return(aux);
-}
-
-void InsertarEnLista(Tnodo ** Lista, Tnodo * Nodo){
-    Nodo->Siguiente=(*Lista);
-    (*Lista)=Nodo;
-}
-
-Tnodo * QuitarNodo(Tnodo ** Lista){
-    Tnodo* nodo;
-    Tnodo* aux=(*Lista);
-    if(!Esvacia(*Lista)){
-       nodo=aux;
-       nodo->Siguiente=NULL;
-       aux=aux->Siguiente;
+    srand(time(NULL));
+    int cant = 50 + rand() % 50;
+    Tnodo *lista = CrearListaVacia();
+    Tnodo *nodo;
+    TProducto *prod;
+    for (int i = 0; i < cant; i++)
+    {
+        prod = CreaProducto(i);
+        nodo = CrearNodo(prod);
+        InsertarNodo(&lista, nodo);
     }
-    return(nodo);
+    // MostrarLista(lista);
+    Tnodo *repartoLiviano = CrearListaVacia();
+    Tnodo *repartoPesado = CrearListaVacia();
+    Tnodo *deposito = CrearListaVacia();
+    MueveProductos(&lista, &repartoPesado, &repartoLiviano, &deposito);
+    printf("\n_______________________________________Reparto Liviano:_______________________________________\n");
+    MostrarLista(repartoLiviano);
+    printf("\n_______________________________________Reparto pesado:_______________________________________\n");
+    MostrarLista(repartoPesado);
+    printf("\n_______________________________________Deposito:_______________________________________ \n");
+    MostrarLista(deposito);
+    printf("\n=====================================Cantidades y pesos===========================\n");
+    printf("\n_______________________________REPARTO LIVIANO_______________________________\n");
+    printf("Cantidad: %d\nPeso: %.2f", cantProd(repartoLiviano), PesoTotal(repartoLiviano));
+    printf("\n_______________________________REPARTO PESADO_______________________________\n");
+    printf("Cantidad: %d\nPeso: %.2f", cantProd(repartoPesado), PesoTotal(repartoPesado));
+    printf("\n_______________________________DEPOSITO_______________________________\n");
+    printf("Cantidad: %d\nPeso: %.2f", cantProd(deposito), PesoTotal(deposito));
+    printf("\n===============================MUESTRA N PROD=============================\n");
+    int cantidadMostrar;
+    printf("\nCantidad a productos a mostrar (-1), toda la lista:  ");
+    scanf("%d", &cantidadMostrar);
+    MostrarNProductos(repartoLiviano, cantidadMostrar);
+    LiberaMemoria(&repartoLiviano);
+    LiberaMemoria(&repartoPesado);
+    LiberaMemoria(&deposito);
 }
 
-int  PesoDeLista(Tnodo * Lista){
-    int peso=0;
-    while(!Esvacia(Lista)){
-        peso+=Lista->Producto->Peso;
-        Lista=Lista->Siguiente;
+Tnodo *CrearListaVacia()
+{
+    return (NULL);
+}
+
+bool EsListaVacia(Tnodo *cabecera)
+{
+    if (cabecera == NULL)
+    {
+        return (true);
     }
-    return(peso);
+    else
+    {
+        return (false);
+    }
 }
 
-void MoverProductos(Tnodo** ListadoDeProductos, Tnodo**RepartoLiviano, Tnodo** RepartoPesado, Tnodo** Deposito){
-    Tnodo* nodo;
-    int elegir;
-    while(!Esvacia(*ListadoDeProductos)){
-        nodo=QuitarNodo(ListadoDeProductos);
-        if(nodo->Producto->Peso>=10)
+Tnodo *CrearNodo(TProducto *dato)
+{
+    Tnodo *nodo = (Tnodo *)malloc(sizeof(struct Tnodo *));
+    nodo->dato = dato;
+    nodo->siguiente = NULL;
+    return (nodo);
+}
+
+void InsertarNodo(Tnodo **cabecera, Tnodo *nodo)
+{
+    nodo->siguiente = *cabecera;
+    *cabecera = nodo;
+}
+
+void MostrarLista(Tnodo *lista)
+{
+    printf("\n==================================MUESTRA LISTA===================================\n");
+    while (!EsListaVacia(lista))
+    {
+        printf("\n");
+        MuestraProd(lista->dato);
+        lista = lista->siguiente;
+    }
+}
+
+void EliminaPrimerElemento(Tnodo **cabecera)
+{
+    Tnodo *nodoAux;
+    if (!EsListaVacia(*cabecera))
+    {
+        nodoAux = (*cabecera);
+        (*cabecera) = (*cabecera)->siguiente;
+        free(nodoAux);
+    }
+    else
+    {
+        printf("\nNo se puede eliminar un nodo de una lista vacia\n");
+    }
+}
+Tnodo *DesenlazarPrimerNodo(Tnodo **cabecera)
+{
+    Tnodo *nodoSacado = NULL;
+    if (!EsListaVacia(*cabecera))
+    {
+        nodoSacado = *cabecera;
+        *cabecera = (*cabecera)->siguiente;
+        nodoSacado->siguiente = NULL;
+    }
+    return (nodoSacado);
+}
+
+TProducto *CreaProducto(int id)
+{
+    TProducto *prod;
+    prod = (TProducto *)malloc(sizeof(TProducto));
+    prod->Id = id;
+    prod->Nombre = Nombre[rand() % 10];
+    prod->Peso = 0.5 + rand() % 50 * 100 / 100;
+    prod->Sucursal = Sucursales[rand() % 3];
+    return (prod);
+}
+
+void MuestraProd(TProducto *prod)
+{
+    printf("\n=============================MUESTRA PROD=========================\n");
+    printf("\nId: %d\nNombre: %s\nPeso: %.2f\nSucursal: %s", prod->Id, prod->Nombre, prod->Peso, prod->Sucursal);
+}
+
+void MueveProductos(Tnodo **lista, Tnodo **repartoPesado, Tnodo **repartoLiviano, Tnodo **deposito)
+{
+    Tnodo *nodo = NULL;
+    float pesoP = 0;
+    float pesoL = 0;
+    while (!EsListaVacia(*lista))
+    {
+        nodo = DesenlazarPrimerNodo(lista);
+        if (nodo)
         {
-            if(PesoDeLista(*RepartoPesado)>600)
+            if (nodo->dato->Peso >= 10)
             {
-                InsertarEnLista(Deposito,nodo);
-            }else
-            {
-                InsertarEnLista(RepartoPesado, nodo);
-            }
-        }
-        else
-        {
-            if(PesoDeLista(*RepartoLiviano)>100){
-                InsertarEnLista(Deposito,nodo);
+                if (pesoP + (nodo->dato->Peso) <= 600)
+                {
+                    pesoP += (nodo->dato->Peso);
+                    InsertarNodo(repartoPesado, nodo);
+                }
+                else
+                {
+                    InsertarNodo(deposito, nodo);
+                }
             }
             else
             {
-                InsertarEnLista(RepartoLiviano, nodo);
+                if ((pesoL + nodo->dato->Peso) <= 100)
+                {
+                    InsertarNodo(repartoLiviano, nodo);
+                    pesoL += (nodo->dato->Peso);
+                }
+                else
+                {
+                    InsertarNodo(deposito, nodo);
+                }
             }
         }
     }
 }
 
-void Mostrar(Tnodo * Lista){
-    while(!Esvacia(Lista)){
-        printf("\n    Producto %d      \n",Lista->Producto->Id);
-        printf("NOMBBRE: %s\n",Lista->Producto->Nombre);
-        printf(" SUCURSAL: %s\n",Lista->Producto->Sucursal);
-        printf("PESO: %d",Lista->Producto->Peso);
+float PesoTotal(Tnodo *lista)
+{
+    float peso = 0;
+    while (!EsListaVacia(lista))
+    {
+        peso += lista->dato->Peso;
+        lista = lista->siguiente;
+    }
+    return (peso);
+}
+
+int cantProd(Tnodo *lista)
+{
+    int cant = 0;
+    while (!EsListaVacia(lista))
+    {
+        cant += 1;
+        lista = lista->siguiente;
+    }
+    return (cant);
+}
+
+void MostrarNProductos(Tnodo *lista, int cant)
+{
+    int elementos = 0;
+    if (cant == -1)
+    {
+        MostrarLista(lista);
+    }
+    else
+    {
+        while (!EsListaVacia(lista) && elementos < cant)
+        {
+            printf("\n");
+            MuestraProd(lista->dato);
+            lista = lista->siguiente;
+            elementos += 1;
+        }
+    }
+}
+
+void   LiberaMemoria(Tnodo **lista)
+{
+    Tnodo *aux;
+    while (!EsListaVacia(*lista))
+    {
+        aux = *lista;
+        *lista = (*lista)->siguiente;
+        free(aux->dato);
+        free(aux);
     }
 }
